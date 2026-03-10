@@ -61,6 +61,8 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.65f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\spawnerScript2.cs" />
+    <Compile Include="Assets\spawnerScript1.cs" />
     <Compile Include="Assets\playerMovement.cs" />
   </ItemGroup>
   <ItemGroup>
