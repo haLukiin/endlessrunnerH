@@ -61,9 +61,13 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.65f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\spawnerScript2.cs" />
-    <Compile Include="Assets\spawnerScript1.cs" />
-    <Compile Include="Assets\playerMovement.cs" />
+    <Compile Include="Assets\Scripts\playerMovement.cs" />
+    <Compile Include="Assets\Scripts\BackgroundScroll3.cs" />
+    <Compile Include="Assets\Scripts\BackgroundScroll2.cs" />
+    <Compile Include="Assets\Scripts\ObstacleMove.cs" />
+    <Compile Include="Assets\Scripts\InfiniteBackground.cs" />
+    <Compile Include="Assets\Scripts\ObstacleSpawner.cs" />
+    <Compile Include="Assets\Scripts\BackgroundScroll1.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
