@@ -3,22 +3,21 @@ using UnityEngine;
 public class BackgroundScroll4 : MonoBehaviour
 {
     public float speed = 2f;
+    public float resetX = 20f;
+    public float leftLimit = -20f;
 
-    private float spriteWidth;
-
-    void Start()
-    {
-        SpriteRenderer sr = GetComponent<SpriteRenderer>();
-        spriteWidth = sr.bounds.size.x;
-    }
     void Update()
     {
         transform.position += Vector3.left * speed * Time.deltaTime;
 
-
-        if (transform.position.x <= -spriteWidth)
+        if (transform.position.x < leftLimit)
         {
-            transform.position += new Vector3(spriteWidth * 3, 0, 0);
+            transform.position = new Vector3(resetX, transform.position.y, transform.position.z);
+        }
+        if (transform.position.x < leftLimit)
+        {
+            Destroy(gameObject);
         }
     }
+
 }

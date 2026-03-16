@@ -64,10 +64,12 @@
     <Compile Include="Assets\Scripts\BackgroundScroll4.cs" />
     <Compile Include="Assets\Scripts\playerMovement.cs" />
     <Compile Include="Assets\Scripts\BackgroundScroll3.cs" />
+    <Compile Include="Assets\Scripts\spaceSpawner.cs" />
     <Compile Include="Assets\Scripts\BackgroundScroll2.cs" />
     <Compile Include="Assets\Scripts\ObstacleMove.cs" />
     <Compile Include="Assets\Scripts\InfiniteBackground.cs" />
     <Compile Include="Assets\Scripts\ObstacleSpawner.cs" />
+    <Compile Include="Assets\Scripts\MoveLeft.cs" />
     <Compile Include="Assets\Scripts\BackgroundScroll1.cs" />
   </ItemGroup>
   <ItemGroup>

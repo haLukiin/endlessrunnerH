@@ -34,9 +34,15 @@ public class InfiniteBackground : MonoBehaviour
                     }
                 }
 
-                
-                float width = sr.bounds.size.x;
-                backgrounds[i].transform.position = new Vector3(maxX + width / 2, backgrounds[i].transform.position.y, backgrounds[i].transform.position.z);
+                SpriteRenderer srRight = rightmost.GetComponent<SpriteRenderer>();
+
+                float newX =
+                rightmost.transform.position.x +
+                (srRight.bounds.size.x / 2) +
+                (sr.bounds.size.x / 2);
+
+                backgrounds[i].transform.position =
+                new Vector3(newX, backgrounds[i].transform.position.y, backgrounds[i].transform.position.z);
             }
         }
     }
