@@ -7,14 +7,16 @@ public class SpaceSpawner : MonoBehaviour
     public float minX = 18f;
     public float maxX = 22f;
 
-    public float minY = -5f;
-    public float maxY = 5f;
+    public float minY = -4f;
+    public float maxY = 4f;
 
     public float minSpawnDelay = 1.5f;
     public float maxSpawnDelay = 4f;
 
     public float minScale = 0.7f;
     public float maxScale = 1.5f;
+
+    int currentIndex = 0;
 
     void Start()
     {
@@ -30,17 +32,34 @@ public class SpaceSpawner : MonoBehaviour
 
     void SpawnObject()
     {
-        int index = Random.Range(0, spaceObjects.Length);
-        GameObject prefab = spaceObjects[index];
+        if (spaceObjects.Length == 0) return;
 
-        float x = Random.Range(minX, maxX);
-        float y = Random.Range(minY, maxY);
+
+        if (currentIndex >= spaceObjects.Length)
+            currentIndex = 0;
+
+        GameObject prefab = spaceObjects[currentIndex];
+
+        Debug.Log("Spawning index: " + currentIndex);
+
+
+        float x = Random.Range(maxX - 1f, maxX);
+
+
+        float segmentHeight = (maxY - minY) / spaceObjects.Length;
+        float yMin = minY + (currentIndex * segmentHeight);
+        float yMax = yMin + segmentHeight;
+       
+        float y = Random.Range(maxY - 1f, maxY);   // near top edge
+
         Vector3 spawnPos = new Vector3(x, y, 0);
 
-        // Spawn using prefab's own rotation
         GameObject obj = Instantiate(prefab, spawnPos, prefab.transform.rotation);
 
         float scale = Random.Range(minScale, maxScale);
         obj.transform.localScale = Vector3.one * scale;
+
+
+        currentIndex = (currentIndex + 1) % spaceObjects.Length;
     }
 }

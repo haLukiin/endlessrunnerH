@@ -1,23 +1,26 @@
 using UnityEngine;
 
-public class MoveLeft: MonoBehaviour
+public class MoveLeft : MonoBehaviour
 {
-    public float speed = 2f;
-    public float resetX = 20f;
-    public float leftLimit = -20f;
+    public float minSpeedX = 2f;
+    public float maxSpeedX = 5f;
+
+    public float minSpeedY = 1f;
+    public float maxSpeedY = 3f;
+
+    private float speedX;
+    private float speedY;
+
+    void Start()
+    {
+        // Random speeds for variation
+        speedX = Random.Range(minSpeedX, maxSpeedX);
+        speedY = Random.Range(minSpeedY, maxSpeedY);
+    }
 
     void Update()
     {
-        transform.position += Vector3.left * speed * Time.deltaTime;
-
-        if (transform.position.x < leftLimit)
-        {
-            transform.position = new Vector3(resetX, transform.position.y, transform.position.z);
-        }
-        if (transform.position.x < leftLimit)
-        {
-            Destroy(gameObject);
-        }
+        // Move left AND down
+        transform.position += new Vector3(-speedX, -speedY, 0) * Time.deltaTime;
     }
-
 }
