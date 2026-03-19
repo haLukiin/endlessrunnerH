@@ -8,24 +8,13 @@ public class InfiniteBackground : MonoBehaviour
     [Header("Seam Covers")]
     public GameObject monsterPrefab;
     public GameObject deathStarPrefab;
-    
-    private GameObject[] activeCovers;
+
+    private GameObject[] coverPrefabs;
     private int nextCoverIndex = 0;
 
     void Start()
     {
-        // Prepare the seam covers and hide them initially
-        activeCovers = new GameObject[2];
-        if (monsterPrefab != null) 
-        {
-            activeCovers[0] = Instantiate(monsterPrefab, transform);
-            activeCovers[0].SetActive(false);
-        }
-        if (deathStarPrefab != null) 
-        {
-            activeCovers[1] = Instantiate(deathStarPrefab, transform);
-            activeCovers[1].SetActive(false);
-        }
+        coverPrefabs = new GameObject[] { monsterPrefab, deathStarPrefab };
 
         // Sort backgrounds by X position to ensure we know which one is leftmost
         System.Array.Sort(backgrounds, (a, b) => a.transform.position.x.CompareTo(b.transform.position.x));
@@ -52,14 +41,7 @@ public class InfiniteBackground : MonoBehaviour
             backgrounds[i].transform.position += Vector3.left * speed * dt;
         }
 
-        // Move covers only if they are active
-        foreach (var cover in activeCovers)
-        {
-            if (cover != null && cover.activeSelf) 
-            {
-                cover.transform.position += Vector3.left * speed * dt;
-            }
-        }
+        // Covers move themselves via SeamCover component
 
         for (int i = 0; i < backgrounds.Length; i++)
         {
@@ -98,21 +80,18 @@ public class InfiniteBackground : MonoBehaviour
 
     void PositionCoverAtSeam(float xPos)
     {
-        GameObject currentCover = activeCovers[nextCoverIndex];
-        if (currentCover != null)
-        {
-            currentCover.SetActive(true);
+        GameObject prefab = coverPrefabs[nextCoverIndex];
+        if (prefab == null) return;
 
-            SpriteRenderer coverSR = currentCover.GetComponent<SpriteRenderer>();
-            if (coverSR != null)
-            {
-                coverSR.sortingOrder = 10;
-            }
+        float randomY = Random.Range(-2f, 2f);
+        GameObject cover = Instantiate(prefab, new Vector3(xPos, randomY, -1f), Quaternion.identity);
 
-            float randomY = Random.Range(-2f, 2f);
-            currentCover.transform.position = new Vector3(xPos, randomY, -1f); 
-            
-            nextCoverIndex = (nextCoverIndex + 1) % activeCovers.Length;
-        }
+        SpriteRenderer coverSR = cover.GetComponent<SpriteRenderer>();
+        if (coverSR != null)
+            coverSR.sortingOrder = 10;
+
+        cover.AddComponent<SeamCover>().speed = speed;
+
+        nextCoverIndex = (nextCoverIndex + 1) % coverPrefabs.Length;
     }
 }
