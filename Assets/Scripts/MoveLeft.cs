@@ -11,6 +11,7 @@ public class MoveLeft : MonoBehaviour
     private float speedX;
     private float speedY;
 
+
     void Start()
     {
         // Random speeds for variation

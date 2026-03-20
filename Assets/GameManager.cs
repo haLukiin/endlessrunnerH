@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     private float currentScore = 0f;
     private bool isGameOver = false;
+    public bool IsCountingDown => isCountingDown;
     private bool isCountingDown = true;
     private const string TopScoresKey = "TopScores";
 

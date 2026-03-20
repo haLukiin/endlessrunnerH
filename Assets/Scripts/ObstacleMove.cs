@@ -8,7 +8,8 @@ public class ObstacleMove : MonoBehaviour
     {
         transform.position += Vector3.left * speed * Time.deltaTime;
 
-        if (transform.position.x < -15f)
+        float leftEdge = Camera.main.transform.position.x - (Camera.main.orthographicSize * Camera.main.aspect);
+        if (transform.position.x < leftEdge - 5f)
         {
             Destroy(gameObject);
         }

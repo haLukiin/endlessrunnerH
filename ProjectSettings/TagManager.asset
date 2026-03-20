@@ -51,5 +51,8 @@ TagManager:
   - name: New Layer 3
     uniqueID: 732028755
     locked: 0
+  - name: New Layer 4
+    uniqueID: 3163684825
+    locked: 0
   m_RenderingLayers:
   - Default

@@ -101,5 +101,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
-  resetX: 20
-  leftLimit: -20

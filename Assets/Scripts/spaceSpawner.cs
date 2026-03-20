@@ -20,7 +20,8 @@ public class SpaceSpawner : MonoBehaviour
 
     void Start()
     {
-        SpawnLoop();
+        // Wait 2 seconds before starting the spawn loop
+        Invoke(nameof(SpawnLoop), 2f);
     }
 
     void SpawnLoop()
@@ -50,7 +51,7 @@ public class SpaceSpawner : MonoBehaviour
         float yMin = minY + (currentIndex * segmentHeight);
         float yMax = yMin + segmentHeight;
        
-        float y = Random.Range(maxY - 1f, maxY);   // near top edge
+        float y = Random.Range(yMin, yMax); // Random position within the current segment
 
         Vector3 spawnPos = new Vector3(x, y, 0);
 

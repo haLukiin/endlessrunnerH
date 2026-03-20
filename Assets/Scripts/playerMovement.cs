@@ -27,6 +27,9 @@ public class playerMovement : MonoBehaviour
 
     void Flymovement()
     {
+        if (gameManager == null) return;
+        if (gameManager.IsCountingDown) return;
+
         if (Input.GetKeyDown(KeyCode.Space))
             rb.linearVelocity = Vector2.up * jumpForce;
     }
