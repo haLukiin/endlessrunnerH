@@ -83,7 +83,7 @@ public class InfiniteBackground : MonoBehaviour
         GameObject prefab = coverPrefabs[nextCoverIndex];
         if (prefab == null) return;
 
-        float randomY = Random.Range(-2f, 2f);
+        float randomY = Random.Range(-1f, 1f);
         GameObject cover = Instantiate(prefab, new Vector3(xPos, randomY, -1f), Quaternion.identity);
 
         SpriteRenderer coverSR = cover.GetComponent<SpriteRenderer>();
