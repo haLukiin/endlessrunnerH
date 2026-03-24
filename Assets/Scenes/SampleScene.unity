@@ -564,6 +564,7 @@ MonoBehaviour:
   topScoresText: {fileID: 211000671}
   countdownText: {fileID: 675201828}
   scoreMultiplier: 10
+  gameOverDelay: 1.5
 --- !u!4 &459283276
 Transform:
   m_ObjectHideFlags: 0
@@ -591,6 +592,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -716,6 +718,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d4f1fb9ebfe0d94c91af8962b2c126b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  smoothSpeed: 5
 --- !u!1 &556553549
 GameObject:
   m_ObjectHideFlags: 0
@@ -795,7 +810,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 732028755
+  m_SortingLayerID: -1009356837
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &556553553
@@ -994,7 +1009,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 000000004dcff98ebbfaea9a53dfa12bd9ff91bc
+  m_ApplyToSortingLayers: 000000004dcff98ebbfaea9a53dfa12bd9ff91bc9b3a823fdb6fd6c3
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -1173,6 +1188,7 @@ MonoBehaviour:
   jumpForce: 8
   rotationSpeed: 5
   gameManager: {fileID: 459283275}
+  explosionPrefab: {fileID: 7459955773504946199, guid: 8432474127031b240914d6029de945ca, type: 3}
 --- !u!60 &626913337
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -2211,7 +2227,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 2735001531698169152, guid: a52dc9d378221c548971c26aa183e3d0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -2443,7 +2459,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 2735001531698169152, guid: a52dc9d378221c548971c26aa183e3d0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -2510,8 +2526,8 @@ MonoBehaviour:
   maxY: 6
   minSpawnDelay: 4
   maxSpawnDelay: 9
-  minScale: 0.2
-  maxScale: 0.4
+  minScale: 0.12
+  maxScale: 0.15
 --- !u!4 &2082909445
 Transform:
   m_ObjectHideFlags: 0

@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Score Settings")]
     public float scoreMultiplier = 10f; // How fast the score increases
+    public float gameOverDelay = 1.5f;   // How long to wait before showing Game Over screen
 
     private float currentScore = 0f;
     private bool isGameOver = false;
@@ -94,8 +95,8 @@ public class GameManager : MonoBehaviour
         }
         else if (isGameOver)
         {
-            // Check for Restart
-            if (Input.GetKeyDown(KeyCode.Space))
+            // Check for Restart (Only if UI is active or after delay)
+            if (Input.GetKeyDown(KeyCode.Space) && (gameOverCanvas == null || gameOverCanvas.activeSelf))
             {
                 RestartGame();
             }
@@ -117,12 +118,69 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void StopAllMovement(Transform ignoreObject)
+    {
+        // 1. Stop all Spawners
+        var spawners = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).Where(m => m.GetType().Name.Contains("Spawner"));
+        foreach (var s in spawners) s.enabled = false;
+
+        // 2. Find all objects with movement scripts
+        var movers = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).Where(m => 
+            m.GetType().Name.Contains("Move") || 
+            m.GetType().Name.Contains("Scroll") || 
+            m.GetType().Name.Contains("Background") ||
+            m.GetType().Name.Contains("SeamCover")
+        );
+
+        foreach (var m in movers)
+        {
+            // Stop the script
+            m.enabled = false;
+
+            string typeName = m.GetType().Name;
+            bool isBackground = typeName.Contains("Background") || typeName.Contains("Scroll");
+            
+            // Check if this object is the one we hit, or a parent of the one we hit
+            bool isHitObject = (ignoreObject != null) && (m.transform == ignoreObject || ignoreObject.IsChildOf(m.transform));
+
+            // If it's an obstacle (Move/SeamCover/etc) and NOT the hit object and NOT background, hide it!
+            if (!isBackground && !isHitObject)
+            {
+                // We only want to hide the actual obstacle game objects
+                if (typeName.Contains("Move") || typeName.Contains("SeamCover"))
+                {
+                    m.gameObject.SetActive(false);
+                }
+            }
+        }
+
+        // 3. Stop all Physics (Rigidbody2D)
+        Rigidbody2D[] allBodies = FindObjectsByType<Rigidbody2D>(FindObjectsSortMode.None);
+        foreach (var rb in allBodies)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+            rb.bodyType = RigidbodyType2D.Kinematic;
+        }
+    }
+
     public void GameOver()
     {
+        if (isGameOver) return; // Prevent multiple calls
+        
         isGameOver = true;
         int finalScore = Mathf.FloorToInt(currentScore);
 
         HandleTopScores(finalScore);
+        
+        // Start the delayed UI showing
+        StartCoroutine(ShowGameOverUI());
+    }
+
+    IEnumerator ShowGameOverUI()
+    {
+        // Wait for the specified delay
+        yield return new WaitForSeconds(gameOverDelay);
 
         if (gameOverCanvas != null)
             gameOverCanvas.SetActive(true);
