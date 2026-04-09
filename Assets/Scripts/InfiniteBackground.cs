@@ -16,70 +16,81 @@ public class InfiniteBackground : MonoBehaviour
     {
         coverPrefabs = new GameObject[] { monsterPrefab, deathStarPrefab };
 
-        // Sort backgrounds by X position to ensure we know which one is leftmost
+        // Sortera bakgrunderna så vi vet ordningen (Vänster till Höger)
         System.Array.Sort(backgrounds, (a, b) => a.transform.position.x.CompareTo(b.transform.position.x));
 
-        // Set Death Star as the first to be spawned (index 1)
-        nextCoverIndex = 1;
-
-        // Position the first cover at the initial seam between the first two backgrounds
-        if (backgrounds.Length >= 2)
+        // Tvinga ihop dem direkt vid start för att ta bort glapp från editorn
+        for (int i = 1; i < backgrounds.Length; i++)
         {
-            SpriteRenderer sr0 = backgrounds[0].GetComponent<SpriteRenderer>();
-            float initialSeamX = backgrounds[0].transform.position.x + (sr0.bounds.size.x / 2);
-            PositionCoverAtSeam(initialSeamX);
+            SnapToTarget(backgrounds[i-1], backgrounds[i]);
         }
+
+        nextCoverIndex = 1;
     }
 
     void Update()
     {
+        float currentMultiplier = GameManager.Instance != null ? GameManager.Instance.speedMultiplier : 1f;
         float dt = Time.deltaTime;
         
-        // Move backgrounds
+        // Flytta alla bakgrunder
         for (int i = 0; i < backgrounds.Length; i++)
         {
-            backgrounds[i].transform.position += Vector3.left * speed * dt;
+            backgrounds[i].transform.position += Vector3.left * speed * currentMultiplier * dt;
         }
 
-        // Covers move themselves via SeamCover component
+        float cameraLeftEdge = Camera.main.transform.position.x - (Camera.main.orthographicSize * Camera.main.aspect);
 
         for (int i = 0; i < backgrounds.Length; i++)
         {
             SpriteRenderer sr = backgrounds[i].GetComponent<SpriteRenderer>();
-            float rightEdge = backgrounds[i].transform.position.x + (sr.bounds.size.x / 2);
+            float spriteWidth = sr.bounds.size.x;
+            float rightEdge = backgrounds[i].transform.position.x + (spriteWidth / 2f);
 
-            // Check if the background piece has moved off-screen to the left
-            if (rightEdge < Camera.main.transform.position.x - (Camera.main.orthographicSize * Camera.main.aspect))
+            // Om biten åkt utanför skärmen till vänster
+            if (rightEdge < cameraLeftEdge)
             {
-                // Find current rightmost piece
-                GameObject rightmost = backgrounds[0];
+                // Hitta den bit som INTE är den vi just nu flyttar (för 2-bilders setup)
+                // Eller hitta den som är längst till höger (för 3+ bilders setup)
+                GameObject rightmost = backgrounds[i];
                 float maxX = -float.MaxValue;
 
-                for (int j = 0; j < backgrounds.Length; j++)
+                foreach (GameObject bg in backgrounds)
                 {
-                    float x = backgrounds[j].transform.position.x + (backgrounds[j].GetComponent<SpriteRenderer>().bounds.size.x / 2);
-                    if (x > maxX)
+                    if (bg != backgrounds[i]) // Vi vill inte jämföra med oss själva
                     {
-                        maxX = x;
-                        rightmost = backgrounds[j];
+                        if (bg.transform.position.x > maxX)
+                        {
+                            maxX = bg.transform.position.x;
+                            rightmost = bg;
+                        }
                     }
                 }
 
-                SpriteRenderer srRight = rightmost.GetComponent<SpriteRenderer>();
+                // Utför "snapping" till den högra bilden
+                SnapToTarget(rightmost, backgrounds[i]);
 
-                // Move this piece to the right of the current rightmost piece
-                float newX = rightmost.transform.position.x + (srRight.bounds.size.x / 2) + (sr.bounds.size.x / 2);
-                backgrounds[i].transform.position = new Vector3(newX, backgrounds[i].transform.position.y, backgrounds[i].transform.position.z);
-
-                // Place a cover exactly on the seam
-                float seamX = rightmost.transform.position.x + (srRight.bounds.size.x / 2);
+                // Placera en cover (monster/death star) vid skarven
+                float seamX = rightmost.transform.position.x + (rightmost.GetComponent<SpriteRenderer>().bounds.size.x / 2f);
                 PositionCoverAtSeam(seamX);
             }
         }
     }
 
+    // Hjälpmetod för att sätta en bild exakt kant-i-kant med en annan
+    void SnapToTarget(GameObject target, GameObject pieceToMove)
+    {
+        float widthA = target.GetComponent<SpriteRenderer>().bounds.size.x;
+        float widthB = pieceToMove.GetComponent<SpriteRenderer>().bounds.size.x;
+        
+        // Beräkna nytt läge: Mitten på A + halva A:s bredd + halva B:s bredd - liten överlappning
+        float newX = target.transform.position.x + (widthA / 2f) + (widthB / 2f) - 0.1f;
+        pieceToMove.transform.position = new Vector3(newX, pieceToMove.transform.position.y, pieceToMove.transform.position.z);
+    }
+
     void PositionCoverAtSeam(float xPos)
     {
+        if (coverPrefabs == null || coverPrefabs.Length == 0) return;
         GameObject prefab = coverPrefabs[nextCoverIndex];
         if (prefab == null) return;
 
@@ -87,10 +98,11 @@ public class InfiniteBackground : MonoBehaviour
         GameObject cover = Instantiate(prefab, new Vector3(xPos, randomY, -1f), Quaternion.identity);
 
         SpriteRenderer coverSR = cover.GetComponent<SpriteRenderer>();
-        if (coverSR != null)
-            coverSR.sortingOrder = 10;
+        if (coverSR != null) coverSR.sortingOrder = 10;
 
-        cover.AddComponent<SeamCover>().speed = speed;
+        SeamCover sc = cover.GetComponent<SeamCover>();
+        if (sc == null) sc = cover.AddComponent<SeamCover>();
+        sc.speed = speed;
 
         nextCoverIndex = (nextCoverIndex + 1) % coverPrefabs.Length;
     }

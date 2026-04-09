@@ -23,11 +23,24 @@ public class GameManager : MonoBehaviour
     public float scoreMultiplier = 10f; // How fast the score increases
     public float gameOverDelay = 1.5f;   // How long to wait before showing Game Over screen
 
+    [Header("Difficulty Scaling")]
+    public float speedIncreaseRate = 0.02f; // How much the speed multiplier increases per second
+    public float maxSpeedMultiplier = 3f;    // The maximum speed multiplier
+    public float speedMultiplier { get; private set; } = 1f;
+
+    public static GameManager Instance { get; private set; }
+
     private float currentScore = 0f;
     private bool isGameOver = false;
     public bool IsCountingDown => isCountingDown;
     private bool isCountingDown = true;
     private const string TopScoresKey = "TopScores";
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
 
     void Start()
     {
@@ -89,8 +102,14 @@ public class GameManager : MonoBehaviour
     {
         if (!isGameOver && !isCountingDown)
         {
-            // Increase score based on time
-            currentScore += Time.deltaTime * scoreMultiplier;
+            // Increase speed multiplier over time
+            if (speedMultiplier < maxSpeedMultiplier)
+            {
+                speedMultiplier += speedIncreaseRate * Time.deltaTime;
+            }
+
+            // Increase score based on time and speed
+            currentScore += Time.deltaTime * scoreMultiplier * speedMultiplier;
             UpdateScoreText();
         }
         else if (isGameOver)
